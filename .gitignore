@@ -1,0 +1,8 @@
+target
+build
+
+*.cache
+/.cache
+
+/.vscode/launch.json
+/subprojects/blueprint-compiler

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The UI structure for Better Greeter must contain certain objects. -->
+
+<!-- 1. <object class="GtkWindow" id="greeter-window"> -->
+<!-- 2. <object class="" -->
+
+<interface>
+  <requires lib="gtk" version="4.0"/>
+
+  <object class="GtkWindow" id="greeter-window">
+
+    <property name="title">Better Greeter</property>
+    <property name="name">greeter-window</property>
+
+    <property name="fullscreened">true</property>
+    <child>
+
+      <object class="GtkBox" id="greeter-container">
+
+        <property name="orientation">vertical</property>
+        <property name="hexpand">true</property>
+        <property name="vexpand">true</property>
+      </object>
+    </child>
+  </object>
+</interface>

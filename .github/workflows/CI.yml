@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - '**/meson.build'
+      - '**/meson_options.txt'
+      - '**/*.meson'
+      - '.github/workflows/*.yml'
+      - '**/*.cc'
+      - '**/*.hh'
+
+permissions:
+  contents: read
+
+jobs:
+  clang:
+    name: "Build Better Greeter - clang"
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache pacman packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/pacman/pkg
+          key: ${{ runner.os }}-pacman-${{ hashFiles('.github/dependencies') }}
+          restore-keys: |
+            ${{ runner.os }}-pacman-
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sed -i 's/SigLevel    = Required DatabaseOptional/SigLevel    = Optional TrustAll/' /etc/pacman.conf
+          pacman -Syyu --noconfirm --noprogressbar --needed - < .github/dependencies
+
+      - name: compile
+        run: |
+          CXX=clang++ CXX_LD=lld meson setup target
+          meson compile -C target
+
+  gcc:
+    name: "Build Better Greeter - gcc"
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache pacman packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/pacman/pkg
+          key: ${{ runner.os }}-pacman-${{ hashFiles('.github/dependencies') }}
+          restore-keys: |
+            ${{ runner.os }}-pacman-
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sed -i 's/SigLevel    = Required DatabaseOptional/SigLevel    = Optional TrustAll/' /etc/pacman.conf
+          pacman -Syyu --noconfirm --noprogressbar --needed - < .github/dependencies
+
+      - name: compile
+        run: |
+          CXX=g++ CXX_LD=bfd meson setup target
+          meson compile -C target

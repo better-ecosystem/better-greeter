@@ -1,0 +1,7 @@
+<gresources>
+
+    <gresource prefix="/org/BetterDE/BetterGreeter">
+
+        <file preprocess="xml-stripblanks">greeter.xml</file>
+    </gresource>
+</gresources>

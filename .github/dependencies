@@ -1,0 +1,8 @@
+base
+gtkmm-4.0
+jsoncpp
+pkgconf
+meson
+clang
+cmake
+lld
