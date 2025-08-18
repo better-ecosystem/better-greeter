@@ -1,1 +1,5 @@
-* { background-color: red; }
+#greeter-clock
+{
+    font-weight: bold;
+    font-size: x-large;
+}

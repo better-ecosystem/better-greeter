@@ -2,7 +2,10 @@
 #include <gtkmm/window.h>
 
 namespace Gtk
-{ class Builder; }
+{
+    class Builder;
+    class Label;
+}
 
 
 namespace better
@@ -17,6 +20,6 @@ namespace better
                        const Glib::RefPtr<Gtk::Builder> &p_builder );
 
     private:
-
+        static auto clock_updater( void ) -> bool;
     };
 }

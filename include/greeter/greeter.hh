@@ -30,14 +30,14 @@ namespace better
         static auto get_builder( void ) -> std::shared_ptr<Gtk::Builder> &;
 
 
-        template<typename T_Widget, typename... T_Args>
+        /**
+         * Wrapper for `Gtk::Builder::get_widget` for getting widgets
+         * from the greeter's internal ui file.
+         */
+        template<typename T_Widget>
         [[nodiscard]]
-        auto get_widget( const std::string &p_name,
-                         T_Args        &&...p_args ) -> T_Widget *
-        {
-            return Gtk::Builder::get_widget_derived<T_Widget>(
-                get_builder(), p_name, std::forward<T_Args>(p_args)...);
-        }
+        static auto get_widget( const std::string &p_name ) -> T_Widget *
+        { return get_builder()->get_widget<T_Widget>(p_name); }
 
 
         Greeter( void );

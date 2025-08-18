@@ -21,6 +21,17 @@
         <property name="orientation">vertical</property>
         <property name="hexpand">true</property>
         <property name="vexpand">true</property>
+        <property name="visible">true</property>
+        <child>
+
+          <object class="GtkLabel" id="greeter-clock">
+
+            <property name="label">Sunday 0 January 1969 - 00:00:00</property>
+            <property name="name">greeter-clock</property>
+            <property name="halign">center</property>
+            <property name="valign">start</property>
+          </object>
+        </child>
       </object>
     </child>
   </object>
