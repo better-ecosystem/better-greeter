@@ -21,7 +21,10 @@ source_files = files(
     'src/greeter/greeter.cc',
     'src/greeter/window.cc',
 
+    'src/widgets/profile.cc',
+
     'src/main.cc',
+    'src/utils.cc',
 )
 
 resources = gnome.compile_resources(

@@ -7,10 +7,15 @@ namespace Gtk
 {
     class Application;
 }
+class Profile;
 
 
 namespace better
 {
+    using str_pair = std::pair<std::string, std::string>;
+    static constexpr std::string_view PASSWD_PATH { "/etc/passwd" };
+
+
     class Greeter
     {
     public:
@@ -38,6 +43,22 @@ namespace better
         [[nodiscard]]
         static auto get_widget( const std::string &p_name ) -> T_Widget *
         { return get_builder()->get_widget<T_Widget>(p_name); }
+
+
+        /**
+         * Returns the list of `normal` users who have their own home directory.
+         * Normal users are defined as users with ID >= 1000, and not nobody.
+         */
+        [[nodiscard]]
+        static auto get_users( void ) -> std::vector<str_pair>;
+
+
+        /**
+         * Returns the user profile picture from $HOME/.face or
+         * /usr/share/pixmaps/faces/default.png.
+         */
+        [[nodiscard]]
+        static auto get_profile_picture( const str_pair &p_user ) -> Profile *;
 
 
         Greeter( void );

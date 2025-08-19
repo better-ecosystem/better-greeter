@@ -6,7 +6,7 @@
 <!-- 2. <object class="" -->
 
 <interface>
-  <requires lib="gtk" version="4.0"/>
+  <requires lib="gtk" version="4.0" />
 
   <object class="GtkWindow" id="greeter-window">
 
@@ -16,20 +16,78 @@
     <property name="fullscreened">true</property>
     <child>
 
-      <object class="GtkBox" id="greeter-container">
+      <object class="GtkBox" id="greeter-background">
 
         <property name="orientation">vertical</property>
         <property name="hexpand">true</property>
         <property name="vexpand">true</property>
         <property name="visible">true</property>
+
         <child>
 
-          <object class="GtkLabel" id="greeter-clock">
+          <object class="GtkBox" id="greeter-container">
 
-            <property name="label">Sunday 0 January 1969 - 00:00:00</property>
-            <property name="name">greeter-clock</property>
+            <property name="name">greeter-container</property>
+            <property name="orientation">vertical</property>
+            <property name="margin-bottom">50</property>
+            <property name="margin-start">50</property>
+            <property name="margin-top">50</property>
+            <property name="margin-end">50</property>
             <property name="halign">center</property>
-            <property name="valign">start</property>
+            <property name="valign">center</property>
+
+            <child>
+
+              <object class="GtkLabel" id="greeter-clock">
+
+                <property name="label">Sunday 0 January 1969 - 00:00:00</property>
+                <property name="name">greeter-clock</property>
+                <property name="margin-top">10</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+              </object>
+            </child>
+
+            <child>
+
+              <object class="GtkBox" id="greeter-profile-container">
+
+                <property name="name">greeter-profile-container</property>
+                <property name="halign">start</property>
+
+                <child>
+                  <object class="GtkBox" id="greeter-pfp-container"/>
+                </child>
+
+                <child>
+
+                  <object class="GtkBox">
+
+                    <property name="name">greeter-username-container</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="vexpand">true</property>
+                    <property name="spacing">10</property>
+                    <child>
+
+                      <object class="GtkLabel">
+
+                        <property name="name">greeter-username-label</property>
+                        <property name="label">Username: </property>
+                      </object>
+                    </child>
+
+                    <child>
+
+                      <object class="GtkDropDown" id="greeter-username">
+
+                        <property name="name">greeter-username-entry</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
       </object>
