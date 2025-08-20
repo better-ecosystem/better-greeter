@@ -1,5 +1,9 @@
 #pragma once
+#include <filesystem>
 #include <gtkmm/window.h>
+
+namespace fs = std::filesystem;
+
 
 namespace Gtk
 {
@@ -14,17 +18,26 @@ namespace Gtk
 
 namespace better
 {
-    struct GreeterWidgets
+    class Profile;
+
+
+    struct GreeterData
     {
-        Gtk::Label *clock;
-        Gtk::Box *pfp_container;
+        struct
+        {
+            Gtk::Label *clock;
 
-        Gtk::DropDown *username;
-        Gtk::Entry *password;
+            Profile *pfp;
 
-        Gtk::DropDown *session;
+            Gtk::Label *username;
+            Gtk::Button *switch_user;
 
-        Gtk::Button *login;
+            Gtk::Entry *password;
+
+            Gtk::DropDown *session;
+        } widgets;
+
+        std::vector<std::pair<std::string, fs::path>> users;
     };
 
 
@@ -34,17 +47,14 @@ namespace better
         GreeterWindow( void );
 
 
-        GreeterWindow( BaseObjectType                   *p_cobject,
-                       const Glib::RefPtr<Gtk::Builder> &p_builder );
-
     private:
-        GreeterWidgets m_widgets;
+        GreeterData m_data;
+        size_t m_user_idx;
 
-        std::vector<std::pair<std::string, std::string>> m_users;
 
+        void init_data( void );
 
         auto update_clock( void ) -> bool;
-
-        void update_pfp( void );
+        void on_switch_user( void );
     };
 }

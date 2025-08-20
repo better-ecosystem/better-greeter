@@ -1,18 +1,21 @@
 #pragma once
+#include <filesystem>
 #include <memory>
 #include <gtkmm/builder.h>
+
+namespace fs = std::filesystem;
 
 
 namespace Gtk
 {
     class Application;
 }
-class Profile;
 
 
 namespace better
 {
-    using str_pair = std::pair<std::string, std::string>;
+    /* A pair containing a string and a path to the profile picture. */
+    using usr_pair = std::pair<std::string, fs::path>;
     static constexpr std::string_view PASSWD_PATH { "/etc/passwd" };
 
 
@@ -50,15 +53,7 @@ namespace better
          * Normal users are defined as users with ID >= 1000, and not nobody.
          */
         [[nodiscard]]
-        static auto get_users( void ) -> std::vector<str_pair>;
-
-
-        /**
-         * Returns the user profile picture from $HOME/.face or
-         * /usr/share/pixmaps/faces/default.png.
-         */
-        [[nodiscard]]
-        static auto get_profile_picture( const str_pair &p_user ) -> Profile *;
+        static auto get_users( void ) -> std::vector<usr_pair>;
 
 
         Greeter( void );

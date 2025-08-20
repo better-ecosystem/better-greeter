@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <fstream>
 
 #include <gtkmm.h>
@@ -9,6 +8,19 @@
 #include "utils.hh"
 
 using better::Greeter;
+
+
+namespace
+{
+    [[nodiscard]]
+    auto
+    get_profile_picture( const fs::path &p_home_dir ) -> fs::path
+    {
+        fs::path pfp_path { p_home_dir / ".face" };
+        if (fs::exists(pfp_path)) return pfp_path;
+        return fs::path();
+    }
+}
 
 
 auto
@@ -46,11 +58,11 @@ Greeter::get_builder( void ) -> Glib::RefPtr<Gtk::Builder> &
 
 
 auto
-Greeter::get_users() -> std::vector<std::pair<std::string, std::string>>
+Greeter::get_users() -> std::vector<std::pair<std::string, fs::path>>
 {
-    std::ifstream passwd { std::filesystem::path(PASSWD_PATH) };
+    std::ifstream passwd { fs::path(PASSWD_PATH) };
 
-    std::vector<std::pair<std::string, std::string>> users;
+    std::vector<std::pair<std::string, fs::path>> users;
     users.reserve(2);
 
     std::array<std::string, 7> buffer;
@@ -75,30 +87,10 @@ Greeter::get_users() -> std::vector<std::pair<std::string, std::string>>
         if (utils::to_int(buffer[2]) < 1000) continue;
         if (buffer[0] == "nobody") continue;
 
-        users.emplace_back(buffer[0], buffer[5]);
+        users.emplace_back(buffer[0], get_profile_picture(buffer[5]));
     }
 
     return users;
-}
-
-
-auto
-Greeter::get_profile_picture( const str_pair &p_user ) -> Profile *
-{
-    namespace fs = std::filesystem;
-    std::string path;
-
-    do { /* $HOME/.face */
-        fs::path pfp_path { fs::path(p_user.second) / ".face" };
-        if (!fs::exists(pfp_path) || !fs::is_regular_file(pfp_path))
-            break;
-
-        path = pfp_path.string();
-    } while (0);
-
-    if (path.empty()) path = "/usr/share/pixmaps/faces/default.png";
-
-    return Gtk::make_managed<Profile>(path);
 }
 
 

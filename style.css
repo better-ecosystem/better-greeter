@@ -1,5 +1,12 @@
-#greeter-clock
+#greeter-clock,#greeter-username
 {
     font-weight: bold;
     font-size: x-large;
+}
+
+
+#greeter-username-switch-buttton
+{
+    box-shadow: 0;
+    border: 0;
 }
