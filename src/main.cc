@@ -1,12 +1,8 @@
-#include <cstdint>
-#include <print>
-
-#include "greeter/greeter.hh"
+#include "greeter/app.hh"
 
 
 auto
-main( int32_t p_argc, char **p_argv ) -> int
+main( int p_argc, char **p_argv ) -> int
 {
-    better::Greeter greeter {};
-    return greeter.run();
+    return greeter::App { }.run(p_argc, p_argv);
 }
