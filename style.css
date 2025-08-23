@@ -5,8 +5,11 @@
 }
 
 
-#greeter-username-switch-button
+#better-greeter-pfp
 {
-    box-shadow: 0;
-    border: 0;
+    border-radius: 120px;
+    background: transparent;
+    min-height: 200px;
+    min-width: 200px;
+    border: 2px solid rgb(106, 88, 88);
 }

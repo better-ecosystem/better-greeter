@@ -54,15 +54,11 @@ Interface::create_widgets( void )
 
         if (!App::set_pfp(*m_pfp, m_users[last_picked_user])) [[unlikely]]
             m_pfp->set_visible(false);
-        else [[likely]]
-        { /* If the user have a profile picture */
-            m_pfp->set_size_request(64, 64);
-            m_pfp->set_vexpand(true);
+        else [[likely]] /* If the user have a profile picture */
             m_pfp->set_visible(true);
-            m_pfp->set_halign(Gtk::Align::CENTER);
-            m_pfp->set_valign(Gtk::Align::CENTER);
-            m_pfp->set_name("better-greeter-pfp");
-        }
+        m_pfp->set_halign(Gtk::Align::CENTER);
+        m_pfp->set_valign(Gtk::Align::CENTER);
+        m_pfp->set_name("better-greeter-pfp");
         m_container->append(*m_pfp);
 
         auto *username_container { Gtk::make_managed<Gtk::Box>() };
@@ -82,9 +78,8 @@ Interface::create_widgets( void )
 
         username_container->append(*m_username);
         username_container->append(*m_username_switcher);
-        username_container->set_vexpand(true);
         username_container->set_halign(Gtk::Align::CENTER);
-        username_container->set_valign(Gtk::Align::CENTER);
+        username_container->set_valign(Gtk::Align::START);
         m_container->append(*username_container);
 
         m_username_switcher->signal_clicked().connect(sigc::mem_fun(
