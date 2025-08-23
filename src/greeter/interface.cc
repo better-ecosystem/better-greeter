@@ -9,9 +9,7 @@ using greeter::Interface;
 
 Interface::Interface( void ) :
     m_container(Gtk::Orientation::VERTICAL),
-    m_clock("00:00"),
-    m_pfp(),
-    m_username()
+    m_users(App::get_users())
 {
     this->fullscreen();
     this->set_child(*m_container);
@@ -36,6 +34,7 @@ Interface::create_widgets( void )
         m_clock->set_halign(Gtk::Align::CENTER);
         m_clock->set_name("better-greeter-clock");
 
+        m_accessibility->set_has_frame(false);
         m_accessibility->set_halign(Gtk::Align::END);
         m_accessibility->set_name("better-greeter-accessability");
         m_accessibility->set_icon_name(
@@ -48,29 +47,48 @@ Interface::create_widgets( void )
         top_container->append(*m_accessibility);
 
         m_container->append(*top_container);
-        m_container->set_vexpand(true);
-        m_container->set_valign(Gtk::Align::START);
     }
 
     {
-        auto users { App::get_users() };
         auto last_picked_user { App::get_cache()["username"].asString() };
 
-        if (App::set_pfp(*m_pfp, users[last_picked_user])) [[likely]]
+        if (!App::set_pfp(*m_pfp, m_users[last_picked_user])) [[unlikely]]
+            m_pfp->set_visible(false);
+        else [[likely]]
         { /* If the user have a profile picture */
             m_pfp->set_size_request(64, 64);
+            m_pfp->set_vexpand(true);
+            m_pfp->set_visible(true);
             m_pfp->set_halign(Gtk::Align::CENTER);
             m_pfp->set_valign(Gtk::Align::CENTER);
             m_pfp->set_name("better-greeter-pfp");
-            m_container->append(*m_pfp);
         }
+        m_container->append(*m_pfp);
 
-        m_username->set_vexpand(true);
+        auto *username_container { Gtk::make_managed<Gtk::Box>() };
+
+        m_username->set_hexpand(true);
         m_username->set_halign(Gtk::Align::CENTER);
-        m_username->set_valign(Gtk::Align::CENTER);
         m_username->set_label(last_picked_user);
         m_username->set_name("better-greeter-username");
-        m_container->append(*m_username);
+
+        m_username_switcher->set_has_frame(false);
+        m_username_switcher->set_icon_name("media-playback-start-symbolic");
+        m_username_switcher->set_halign(Gtk::Align::START);
+        m_username_switcher->set_name("better-greeter-username-switcher");
+
+        if (m_users.size() == 1)
+            m_username_switcher->set_visible(false);
+
+        username_container->append(*m_username);
+        username_container->append(*m_username_switcher);
+        username_container->set_vexpand(true);
+        username_container->set_halign(Gtk::Align::CENTER);
+        username_container->set_valign(Gtk::Align::CENTER);
+        m_container->append(*username_container);
+
+        m_username_switcher->signal_clicked().connect(sigc::mem_fun(
+            *this, &Interface::on_username_switch));
     }
 }
 
@@ -85,4 +103,22 @@ Interface::update_clock( void ) -> bool
                        std::chrono::zoned_time {
                        std::chrono::current_zone(), now }));
     return true;
+}
+
+
+void
+Interface::on_username_switch( void )
+{ /* On username switch, we need to update `m_pfp`, and `m_username` */
+    auto it { m_users.find(m_username->get_label()) };
+
+    if (it == m_users.end() || std::next(it) == m_users.end())
+        it = m_users.begin();
+    else it++;
+
+    m_username->set_label(it->first);
+    if (App::set_pfp(*m_pfp, it->second)) [[likely]]
+    { /* If the user have a profile picture */
+        m_pfp->set_visible(true);
+    } else [[unlikely]]
+        m_pfp->set_visible(false);
 }

@@ -23,11 +23,9 @@ App::get_app_file( std::string_view p_path ) -> std::string
 
 
 auto
-App::get_users( void ) -> std::unordered_map<std::string, fs::path> &
+App::get_users( void ) -> std::map<std::string, fs::path>
 {
-    static std::unordered_map<std::string, fs::path> users;
-
-    if (!users.empty()) return users;
+    std::map<std::string, fs::path> users;
 
     std::ifstream passwd { "/etc/passwd" };
     if (!passwd.is_open()) {
@@ -138,6 +136,11 @@ App::write_cache( const Json::Value &p_val )
     writer["indentation"] = "    ";
     cache_file << Json::writeString(writer, p_val);
 }
+
+
+
+/* Non static member definition */
+
 
 
 App::App( void ) :

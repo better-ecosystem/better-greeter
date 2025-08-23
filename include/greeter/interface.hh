@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <gtkmm/picture.h>
 #include <gtkmm/window.h>
 #include <gtkmm/button.h>
@@ -9,6 +10,8 @@
 
 namespace greeter
 {
+    namespace fs = std::filesystem;
+
 
     class Interface : public Gtk::Window
     {
@@ -24,10 +27,15 @@ namespace greeter
 
         WidgetPtr<Gtk::Picture> m_pfp;
         WidgetPtr<Gtk::Label> m_username;
+        WidgetPtr<Gtk::Button> m_username_switcher;
+
+        std::map<std::string, fs::path> m_users;
 
     protected:
         void create_widgets( void );
 
         auto update_clock( void ) -> bool;
+
+        void on_username_switch( void );
     };
 }

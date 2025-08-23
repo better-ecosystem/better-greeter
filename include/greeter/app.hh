@@ -35,8 +35,7 @@ namespace greeter
          * normal users being user with UID >= 1000
          */
         [[nodiscard]]
-        static auto get_users( void ) -> std::unordered_map<std::string,
-                                                            fs::path> &;
+        static auto get_users( void ) -> std::map<std::string, fs::path>;
 
 
         /**
