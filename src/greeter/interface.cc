@@ -1,16 +1,27 @@
+#include <iostream>
 #include <chrono>
+
 #include <json/value.h>
 #include <glibmm.h>
+
 #include "greeter/interface.hh"
+#include "greeter/utils.hh"
 #include "greeter/app.hh"
 
 using greeter::Interface;
 
 
-Interface::Interface( void ) :
+Interface::Interface( request_sig &p_request, respond_sig &p_respond ) :
     m_container(Gtk::Orientation::VERTICAL),
-    m_users(App::get_users())
+    m_request(p_request),
+    m_respond(p_respond)
 {
+    auto users { greeter::get_users() };
+    if (!users) {
+        std::cerr << "Failed to open /etc/passwd for reading." << std::endl;
+        std::exit(1);
+    } else { m_users = *users; }
+
     this->fullscreen();
     this->set_child(*m_container);
 
@@ -50,10 +61,21 @@ Interface::create_widgets( void )
     }
 
     {
-        auto last_picked_user { App::get_cache()["username"].asString() };
+        auto last_picked_user { greeter::get_cache()["username"] };
 
-        if (!App::set_pfp(*m_pfp, m_users[last_picked_user])) [[unlikely]]
-            m_pfp->set_visible(false);
+        /* TODO: Make a window showing up saying that a "thing" failed. */
+        if (last_picked_user.empty()) {
+            std::cerr << "Failed to parse cache file." << std::endl;
+            last_picked_user = Json::Value { m_users.begin()->first };
+        }
+
+        if (last_picked_user.isNull()) {
+            std::cerr << "Failed to open cache file for reading." << std::endl;
+            last_picked_user = Json::Value { m_users.begin()->first };
+        }
+
+        if (!greeter::set_pfp(*m_pfp, m_users[last_picked_user.asString()]))
+            [[unlikely]] m_pfp->set_visible(false);
         else [[likely]] /* If the user have a profile picture */
             m_pfp->set_visible(true);
         m_pfp->set_halign(Gtk::Align::CENTER);
@@ -65,7 +87,7 @@ Interface::create_widgets( void )
 
         m_username->set_hexpand(true);
         m_username->set_halign(Gtk::Align::CENTER);
-        m_username->set_label(last_picked_user);
+        m_username->set_label(last_picked_user.asString());
         m_username->set_name("better-greeter-username");
 
         m_username_switcher->set_has_frame(false);
@@ -84,6 +106,10 @@ Interface::create_widgets( void )
 
         m_username_switcher->signal_clicked().connect(sigc::mem_fun(
             *this, &Interface::on_username_switch));
+    }
+
+    {
+
     }
 }
 
@@ -111,7 +137,7 @@ Interface::on_username_switch( void )
     else it++;
 
     m_username->set_label(it->first);
-    if (App::set_pfp(*m_pfp, it->second)) [[likely]]
+    if (greeter::set_pfp(*m_pfp, it->second)) [[likely]]
     { /* If the user have a profile picture */
         m_pfp->set_visible(true);
     } else [[unlikely]]

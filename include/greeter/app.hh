@@ -9,56 +9,13 @@ namespace Gtk  { class Picture; }
 
 namespace greeter
 {
-    namespace fs = std::filesystem;
-
-    static constexpr std::array<std::string_view, 3> BASE_PATHS {{
-        "/etc/better/greeter",
-        "."
-    }};
-    static constexpr std::string_view CACHE_PATH {
-        "/etc/better/greeter/cache.json" };
-
-
     class App
     {
+        using respond_sig = sigc::signal<void (
+                            const std::pair<int32_t, std::string> & )>;
+        using request_sig = sigc::signal<std::pair<int32_t, std::string> ()>;
+
     public:
-        /**
-         * Fetch an application file @p p_path from
-         * @e /etc/greetd/better/ , or @e CWD
-         */
-        [[nodiscard]]
-        static auto get_app_file( std::string_view p_path ) -> std::string;
-
-
-        /**
-         * Fetch normal @e users and their @e HOME from @e /etc/passwd
-         * normal users being user with UID >= 1000
-         */
-        [[nodiscard]]
-        static auto get_users( void ) -> std::map<std::string, fs::path>;
-
-
-        /**
-         * Sets @p p_pfp picture to @p p_home/.face or returns false.
-         */
-        [[nodiscard]]
-        static auto set_pfp( Gtk::Picture      &p_pfp,
-                             const std::string &p_home ) -> bool;
-
-
-        /**
-         * Gets the application's cache from @e /etc/greetd/better/cache.json
-         */
-        [[nodiscard]]
-        static auto get_cache( void ) -> Json::Value;
-
-
-        /**
-         * Writes @p p_val to @e /etc/greetd/better/cache.json
-         */
-        static void write_cache( const Json::Value &p_val );
-
-
         App( void );
 
 
@@ -68,6 +25,9 @@ namespace greeter
 
     private:
         std::shared_ptr<Gtk::Application> m_app;
+
+        request_sig m_req_signal;
+        respond_sig m_res_signal;
 
 
         void load_css( void );

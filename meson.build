@@ -18,6 +18,7 @@ add_project_arguments([
 source_files = files(
     'src/greeter/app.cc',
     'src/greeter/interface.cc',
+    'src/greeter/utils.cc',
 
     'src/main.cc',
 )

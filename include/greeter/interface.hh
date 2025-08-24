@@ -3,6 +3,7 @@
 #include <gtkmm/picture.h>
 #include <gtkmm/window.h>
 #include <gtkmm/button.h>
+#include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 #include <gtkmm/box.h>
 #include "widget_ptr.hh"
@@ -15,8 +16,12 @@ namespace greeter
 
     class Interface : public Gtk::Window
     {
+        using respond_sig = sigc::signal<void (
+                            const std::pair<int32_t, std::string> & )>;
+        using request_sig = sigc::signal<std::pair<int32_t, std::string> ()>;
+
     public:
-        Interface( void );
+        Interface( request_sig &p_request, respond_sig &p_respond );
 
 
     private:
@@ -29,7 +34,14 @@ namespace greeter
         WidgetPtr<Gtk::Label> m_username;
         WidgetPtr<Gtk::Button> m_username_switcher;
 
+        WidgetPtr<Gtk::Entry> m_password;
+
+        WidgetPtr<Gtk::Button> m_settings;
+
         std::map<std::string, fs::path> m_users;
+
+        request_sig m_request;
+        respond_sig m_respond;
 
     protected:
         void create_widgets( void );
