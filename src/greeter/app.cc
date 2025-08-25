@@ -1,11 +1,10 @@
-#include <iostream>
-
 #include <json/json.h>
 #include <gtkmm.h>
 
 #include "greeter/interface.hh"
 #include "greeter/utils.hh"
 #include "greeter/app.hh"
+#include "log.hh"
 
 using greeter::App;
 
@@ -15,7 +14,7 @@ App::App( void ) :
 {
     std::string msg { greeter::check_and_create_app_dir() };
     if (!msg.empty() && msg != "created") {
-        std::cerr << "Failed to create application file: " << msg << std::endl;
+        log::write<log::ERROR>("Failed to create app file: {}", msg);
         std::exit(1);
     }
 

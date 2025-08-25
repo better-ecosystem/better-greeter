@@ -2,6 +2,8 @@
 #pragma once
 #include <string_view>
 #include <filesystem>
+#include <optional>
+#include <array>
 #include <map>
 
 namespace Json { class Value; }
@@ -66,7 +68,7 @@ namespace greeter
      *
      * @return A valid Json::Value on success,
      *         a Json::nullValue on file failure,
-     *         or an empty Json::Value on parsing failure.
+     *         or a Json::Value with "err" key set on parsing failure.
      */
     [[nodiscard]]
     auto get_cache( void ) -> Json::Value;

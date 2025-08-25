@@ -1,6 +1,5 @@
 #include <cstring>
 #include <fstream>
-#include <print>
 
 #include <gtkmm/picture.h>
 #include <json/reader.h>
@@ -8,6 +7,7 @@
 #include <json/value.h>
 
 #include "greeter/utils.hh"
+#include "log.hh"
 
 
 namespace greeter
@@ -124,11 +124,7 @@ namespace greeter
     get_cache( void ) -> Json::Value
     {
         std::ifstream cache_file { fs::path(CACHE_PATH) };
-        if (!cache_file.is_open()) {
-            std::println("ERROR: Failed opening {}: {}",
-                          CACHE_PATH, std::strerror(errno));
-            return Json::nullValue;
-        }
+        if (!cache_file.is_open()) return Json::nullValue;
 
         Json::CharReaderBuilder builder;
         builder["collectComments"] = false;
@@ -136,8 +132,8 @@ namespace greeter
         Json::Value root;
         std::string err;
         if (!Json::parseFromStream(builder, cache_file, &root, &err)) {
-            std::println("ERROR: Failed to parse JSON: {}", err);
-            return Json::Value();
+            root["err"] = Json::Value { err };
+            return root;
         }
 
         return root;

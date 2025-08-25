@@ -1,5 +1,6 @@
 #pragma once
 #include <source_location>
+#include <iostream>
 #include <format>
 #include <syslog.h>
 
@@ -44,7 +45,17 @@ namespace log
     void
     write( const FmtString &p_fmt, T_Args &&...p_args )
     {
-        std::string msg { format(p_fmt.fmt, p_args...) };
+        std::string msg;
+        switch (T_LogLevel) {
+        case DEBUG: msg = "[DEBUG] "; break;
+        case INFO:  msg = "[INFO]  "; break;
+        case WARN:  msg = "[WARN]  "; break;
+        case ERROR: msg = "[ERROR] "; break;
+        }
+
+        msg.append(format(p_fmt.fmt, p_args...));
         syslog(T_LogLevel, "%s", msg.c_str());
+
+        T_LogLevel >= WARN ? std::cerr : std::clog << msg << '\n';
     }
 }
