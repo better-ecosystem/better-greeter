@@ -1,6 +1,6 @@
 project('Better Greeter', 'cpp',
-        default_options: [ 'cpp_std=c++20', 'warning_level=3' ],
-        version: '0.0.4',
+        default_options: [ 'cpp_std=c++23', 'warning_level=3' ],
+        version: '0.0.14',
         license: 'GPL-3.0-or-later',
         license_files: [ 'COPYING' ])
 

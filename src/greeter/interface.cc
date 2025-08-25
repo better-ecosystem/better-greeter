@@ -1,4 +1,3 @@
-#include <iostream>
 #include <chrono>
 
 #include <json/value.h>
@@ -7,7 +6,7 @@
 #include "greeter/interface.hh"
 #include "greeter/utils.hh"
 #include "greeter/app.hh"
-#include "log.hh"
+#include "greeter/log.hh"
 
 using greeter::Interface;
 
@@ -19,7 +18,7 @@ Interface::Interface( request_sig &p_request, respond_sig &p_respond ) :
 {
     auto users { greeter::get_users() };
     if (!users) {
-        log::write<log::ERROR>("Failed to open /etc/passwd for reading.");
+        log::write<ERROR>("Failed to open /etc/passwd for reading.");
         std::exit(1);
     } else { m_users = *users; }
 
@@ -66,13 +65,13 @@ Interface::create_widgets( void )
 
         /* TODO: Make a window showing up saying that a "thing" failed. */
         if (last_picked_user.isMember("err")) {
-            log::write<log::ERROR>("Failed to parse cache file: {}",
+            log::write<ERROR>("Failed to parse cache file: {}",
                                     last_picked_user["err"].asString());
             last_picked_user = Json::Value { m_users.begin()->first };
         } else last_picked_user = last_picked_user["username"];
 
         if (last_picked_user.isNull()) {
-            log::write<log::ERROR>("Failed to open cache file for reading.");
+            log::write<ERROR>("Failed to open cache file for reading.");
             last_picked_user = Json::Value { m_users.begin()->first };
         }
 

@@ -4,7 +4,7 @@
 #include "greeter/interface.hh"
 #include "greeter/utils.hh"
 #include "greeter/app.hh"
-#include "log.hh"
+#include "greeter/log.hh"
 
 using greeter::App;
 
@@ -14,7 +14,7 @@ App::App( void ) :
 {
     std::string msg { greeter::check_and_create_app_dir() };
     if (!msg.empty() && msg != "created") {
-        log::write<log::ERROR>("Failed to create app file: {}", msg);
+        log::write<ERROR>("Failed to create app file: {}", msg);
         std::exit(1);
     }
 
