@@ -1,4 +1,3 @@
-/* This file shall contain utilities function for BetterGreeter */
 #pragma once
 #include <string_view>
 #include <filesystem>
@@ -23,7 +22,6 @@ namespace greeter
 
 
 
-    [[nodiscard]]
     /**
      * @brief Checks whether the application directory and file exists,
      *        creates them if not.
@@ -31,6 +29,7 @@ namespace greeter
      * @return An empty string on found, "created" on successfully created,
      *         or the error message on errors.
      */
+    [[nodiscard]]
     auto check_and_create_app_dir( void ) -> std::string;
 
 

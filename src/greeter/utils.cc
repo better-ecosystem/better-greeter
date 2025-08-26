@@ -57,7 +57,7 @@ namespace greeter
         /* Error returned will always come from "failure to open file",
            so theres no need to return a message / std::expected.
         */
-        if (!passwd.is_open()) return std::nullopt;
+        if (!passwd.is_open()) [[unlikely]] return std::nullopt;
 
         std::array<std::string, 7> buffer;
 
@@ -124,14 +124,16 @@ namespace greeter
     get_cache( void ) -> Json::Value
     {
         std::ifstream cache_file { fs::path(CACHE_PATH) };
-        if (!cache_file.is_open()) return Json::nullValue;
+        if (!cache_file.is_open()) [[unlikely]] return Json::nullValue;
 
         Json::CharReaderBuilder builder;
         builder["collectComments"] = false;
 
         Json::Value root;
         std::string err;
-        if (!Json::parseFromStream(builder, cache_file, &root, &err)) {
+        if (!Json::parseFromStream(builder, cache_file, &root, &err))
+            [[unlikely]]
+        {
             root["err"] = Json::Value { err };
             return root;
         }
@@ -144,7 +146,7 @@ namespace greeter
     write_cache( const Json::Value &p_val ) -> bool
     {
         std::ofstream cache_file { fs::path(CACHE_PATH) };
-        if (!cache_file.is_open()) return false;
+        if (!cache_file.is_open()) [[unlikely]] return false;
 
         Json::StreamWriterBuilder writer;
         writer["indentation"] = "    ";

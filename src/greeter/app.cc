@@ -18,6 +18,8 @@ App::App( void ) :
         std::exit(1);
     }
 
+    if (msg.empty()) log::write<INFO>("Application file found.");
+
     load_css();
 }
 

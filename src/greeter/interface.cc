@@ -17,10 +17,11 @@ Interface::Interface( request_sig &p_request, respond_sig &p_respond ) :
     m_respond(p_respond)
 {
     auto users { greeter::get_users() };
-    if (!users) {
+    if (!users) [[unlikely]]
+    {
         log::write<ERROR>("Failed to open /etc/passwd for reading.");
         std::exit(1);
-    } else { m_users = *users; }
+    } else [[likely]] { m_users = *users; }
 
     this->fullscreen();
     this->set_child(*m_container);
