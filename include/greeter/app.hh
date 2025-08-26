@@ -28,10 +28,6 @@ namespace greeter
         request_sig m_req_signal;
         respond_sig m_res_signal;
 
-        /* Either "lockscreen" or "greeter" */
-        Glib::ustring m_greeter_mode;
-
-
         void load_css( void );
     };
 }

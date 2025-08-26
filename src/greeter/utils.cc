@@ -24,7 +24,12 @@ namespace greeter
 
         if (!fs::exists(CACHE_PATH)) try {
             Json::Value cache;
-            cache["username"] = Json::Value { get_users()->begin()->first };
+            std::map users { get_users() };
+
+            if (!users.empty())
+                cache["username"] = Json::Value { users.begin()->first };
+            else throw std::runtime_error(
+                      "Failed to open /etc/passwd for reading");
 
             if (!write_cache(cache))
                 throw std::runtime_error("Failed to write cache file");
@@ -48,7 +53,7 @@ namespace greeter
 
 
     auto
-    get_users( void ) -> std::optional<std::map<std::string, fs::path>>
+    get_users( void ) -> std::map<std::string, fs::path>
     {
         std::map<std::string, fs::path> users;
 
@@ -57,7 +62,7 @@ namespace greeter
         /* Error returned will always come from "failure to open file",
            so theres no need to return a message / std::expected.
         */
-        if (!passwd.is_open()) [[unlikely]] return std::nullopt;
+        if (!passwd.is_open()) [[unlikely]] return users;
 
         std::array<std::string, 7> buffer;
 

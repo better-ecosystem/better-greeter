@@ -46,10 +46,10 @@ namespace greeter
      * @brief Fetch users from @e /etc/passwd .
      *
      * @return A valid map of username and home directory,
-     *         or an `std::nullopt` on file failure.
+     *         or an empty map on file failure.
      */
     [[nodiscard]]
-    auto get_users( void ) -> std::optional<std::map<std::string, fs::path>>;
+    auto get_users( void ) -> std::map<std::string, fs::path>;
 
 
     /**

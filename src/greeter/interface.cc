@@ -13,15 +13,16 @@ using greeter::Interface;
 
 Interface::Interface( request_sig &p_request, respond_sig &p_respond ) :
     m_container(Gtk::Orientation::VERTICAL),
+    m_users(greeter::get_users()),
     m_request(p_request),
     m_respond(p_respond)
 {
     auto users { greeter::get_users() };
-    if (!users) [[unlikely]]
+    if (m_users.empty()) [[unlikely]]
     {
         log::write<ERROR>("Failed to open /etc/passwd for reading.");
         std::exit(1);
-    } else [[likely]] { m_users = *users; }
+    }
 
     this->fullscreen();
     this->set_child(*m_container);
