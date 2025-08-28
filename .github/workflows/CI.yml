@@ -20,6 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-meson
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies and Meson
         run: |
           sudo apt-get update
@@ -37,6 +45,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-meson
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies and Meson
         run: |
