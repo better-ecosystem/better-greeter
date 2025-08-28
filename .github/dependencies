@@ -1,8 +1,5 @@
-base
-gtkmm-4.0
-jsoncpp
-pkgconf
-meson
+libgtkmm-4.0-dev
+libjsoncpp-dev
+pkg-config
 clang
-cmake
 lld
