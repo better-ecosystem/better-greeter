@@ -63,6 +63,12 @@ Interface::create_widgets( void )
     }
 
     {
+        auto *user_container { Gtk::make_managed<Gtk::Box>() };
+        user_container->set_orientation(Gtk::Orientation::VERTICAL);
+        user_container->set_vexpand(true);
+        user_container->set_halign(Gtk::Align::CENTER);
+        user_container->set_valign(Gtk::Align::CENTER);
+
         Json::Value last_picked_user { greeter::get_cache() };
 
         /* TODO: Make a window showing up saying that a "thing" failed. */
@@ -84,7 +90,7 @@ Interface::create_widgets( void )
         m_pfp->set_halign(Gtk::Align::CENTER);
         m_pfp->set_valign(Gtk::Align::CENTER);
         m_pfp->set_name("better-greeter-pfp");
-        m_container->append(*m_pfp);
+        user_container->append(*m_pfp);
 
         auto *username_container { Gtk::make_managed<Gtk::Box>() };
 
@@ -103,9 +109,12 @@ Interface::create_widgets( void )
 
         username_container->append(*m_username);
         username_container->append(*m_username_switcher);
+        username_container->set_margin_top(10);
         username_container->set_halign(Gtk::Align::CENTER);
         username_container->set_valign(Gtk::Align::START);
-        m_container->append(*username_container);
+        user_container->append(*username_container);
+
+        m_container->append(*user_container);
 
         m_username_switcher->signal_clicked().connect(sigc::mem_fun(
             *this, &Interface::on_username_switch));

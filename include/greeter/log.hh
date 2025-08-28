@@ -1,8 +1,10 @@
 #pragma once
 #include <source_location>
-#include <iostream>
+#include <ostream>
 #include <format>
 #include <syslog.h>
+
+namespace std { extern std::ostream clog; }
 
 
 namespace greeter
@@ -58,7 +60,7 @@ namespace greeter
             msg.append(format(p_fmt.fmt, p_args...));
             syslog(T_LogLevel, "%s", msg.c_str());
 
-            T_LogLevel >= WARN ? std::cerr : std::clog << msg << '\n';
+            std::clog << msg << '\n';
         }
     }
 }
