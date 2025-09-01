@@ -22,6 +22,8 @@ App::App( void ) :
     if (msg.empty()) log::write<INFO>("Application file found.");
 
     load_css();
+
+    // m_signal.connect()
 }
 
 

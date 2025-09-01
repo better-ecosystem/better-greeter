@@ -47,6 +47,7 @@ Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
         "better-greeter-username-switcher");
     m_password = p_b->get_widget<Gtk::Entry>("better-greeter-password");
     m_clock = p_b->get_widget<Gtk::Label>("better-greeter-clock");
+    m_settings = p_b->get_widget<Gtk::Button>("better-greeter-settings");
 
     {
         Json::Value last_picked_user { greeter::get_cache() };
@@ -90,6 +91,8 @@ Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
 
         m_username_switcher->signal_clicked().connect(sigc::mem_fun(
             *this, &Interface::on_username_switch));
+
+        
     }
 }
 

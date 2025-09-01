@@ -13,18 +13,18 @@ using greeter::Socket;
 
 Socket::Socket( void )
 {
-    // static const char *GREETD_SOCKET { std::getenv("GREETD_SOCKET") };
-    // if (GREETD_SOCKET == nullptr) {
-    //     greeter::log::write<LogLevel::ERROR>("GREETD_SOCKET not found.");
-    //     std::exit(1);
-    // }
+    static const char *GREETD_SOCKET { std::getenv("GREETD_SOCKET") };
+    if (GREETD_SOCKET == nullptr) {
+        greeter::log::write<LogLevel::ERROR>("GREETD_SOCKET not found.");
+        std::exit(1);
+    }
 
-    // m_client = Gio::SocketClient::create();
-    // auto connectable { Gio::UnixSocketAddress::create(GREETD_SOCKET) };
-    // m_connection = m_client->connect(connectable);
+    m_client = Gio::SocketClient::create();
+    auto connectable { Gio::UnixSocketAddress::create(GREETD_SOCKET) };
+    m_connection = m_client->connect(connectable);
 
-    // m_ostream = m_connection->get_output_stream();
-    // m_istream = m_connection->get_input_stream();
+    m_ostream = m_connection->get_output_stream();
+    m_istream = m_connection->get_input_stream();
 }
 
 

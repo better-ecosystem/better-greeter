@@ -27,6 +27,7 @@ namespace greeter
             CANCEL_SESSION
         };
 
+
         struct Request
         {
             ReqType type;
