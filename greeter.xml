@@ -110,5 +110,19 @@
         </child>
       </object>
     </child>
+
+    <!-- Settings container -->
+    <child>
+
+      <object class="GtkButton" id="better-greeter-settings">
+
+        <property name="icon-name">preferences-system-symbolic</property>
+        <property name="has-frame">false</property>
+        <property name="hexpand">true</property>
+        <property name="vexpand">true</property>
+        <property name="halign">end</property>
+        <property name="valign">end</property>
+      </object>
+    </child>
   </object>
 </interface>
