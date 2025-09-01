@@ -2,6 +2,7 @@
 
 #include <json/value.h>
 #include <glibmm.h>
+#include <gtkmm.h>
 
 #include "greeter/interface.hh"
 #include "greeter/utils.hh"
@@ -11,11 +12,11 @@
 using greeter::Interface;
 
 
-Interface::Interface( request_sig &p_request, respond_sig &p_respond ) :
+Interface::Interface( const sigc::signal<Socket::Response (
+                      const Socket::Request & )> &p_signal ) :
     m_container(Gtk::Orientation::VERTICAL),
     m_users(greeter::get_users()),
-    m_request(p_request),
-    m_respond(p_respond)
+    m_signal(p_signal)
 {
     auto users { greeter::get_users() };
     if (m_users.empty()) [[unlikely]]
@@ -92,7 +93,7 @@ Interface::create_widgets( void )
         m_pfp->set_name("better-greeter-pfp");
         user_container->append(*m_pfp);
 
-        auto *username_container { Gtk::make_managed<Gtk::Box>() };
+        auto *username_container { Gtk::make_managed<Gtk::CenterBox>() };
 
         m_username->set_hexpand(true);
         m_username->set_halign(Gtk::Align::CENTER);
@@ -101,18 +102,41 @@ Interface::create_widgets( void )
 
         m_username_switcher->set_has_frame(false);
         m_username_switcher->set_icon_name("media-playback-start-symbolic");
-        m_username_switcher->set_halign(Gtk::Align::START);
+        m_username_switcher->set_halign(Gtk::Align::END);
         m_username_switcher->set_name("better-greeter-username-switcher");
 
         if (m_users.size() == 1)
             m_username_switcher->set_visible(false);
 
-        username_container->append(*m_username);
-        username_container->append(*m_username_switcher);
         username_container->set_margin_top(10);
+        username_container->set_hexpand(true);
         username_container->set_halign(Gtk::Align::CENTER);
         username_container->set_valign(Gtk::Align::START);
+
+        username_container->set_center_widget(*m_username);
+        username_container->set_end_widget(*m_username_switcher);
         user_container->append(*username_container);
+
+        m_password->set_invisible_char('*');
+        m_password->set_input_purpose(Gtk::InputPurpose::PASSWORD);
+        m_password->set_visibility(false);
+        m_password->set_icon_from_icon_name(
+            "view-reveal-symbolic", Gtk::Entry::IconPosition::SECONDARY);
+        m_password->signal_icon_press().connect(
+            [this]( Gtk::Entry::IconPosition p_pos )
+            {
+                if (p_pos == Gtk::Entry::IconPosition::SECONDARY) {
+                    m_password->set_visibility(!m_password->get_visibility());
+                    m_password->set_icon_from_icon_name(
+                        !m_password->get_visibility() ?
+                        "view-reveal-symbolic" : "view-conceal-symbolic",
+                        Gtk::Entry::IconPosition::SECONDARY
+                    );
+                }
+            }
+        );
+
+        user_container->append(*m_password);
 
         m_container->append(*user_container);
 

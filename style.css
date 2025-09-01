@@ -11,5 +11,5 @@
     background: transparent;
     min-height: 200px;
     min-width: 200px;
-    border: 2px solid rgb(106, 88, 88);
+    border: 2px solid currentColor;
 }

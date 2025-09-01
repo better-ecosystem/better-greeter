@@ -6,6 +6,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 #include <gtkmm/box.h>
+#include "greeter/ipc.hh"
 #include "widget_ptr.hh"
 
 
@@ -16,12 +17,9 @@ namespace greeter
 
     class Interface : public Gtk::Window
     {
-        using respond_sig = sigc::signal<void (
-                            const std::pair<int32_t, std::string> & )>;
-        using request_sig = sigc::signal<std::pair<int32_t, std::string> ()>;
-
     public:
-        Interface( request_sig &p_request, respond_sig &p_respond );
+        Interface( const sigc::signal<Socket::Response (
+                                const Socket::Request & )> &p_signal );
 
 
     private:
@@ -40,8 +38,7 @@ namespace greeter
 
         std::map<std::string, fs::path> m_users;
 
-        request_sig m_request;
-        respond_sig m_respond;
+        sigc::signal<Socket::Response ( const Socket::Request & )> m_signal;
 
     protected:
         void create_widgets( void );

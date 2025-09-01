@@ -10,7 +10,8 @@ using greeter::App;
 
 
 App::App( void ) :
-    m_app(Gtk::Application::create(APP_ID))
+    m_app(Gtk::Application::create(APP_ID)),
+    m_greetd_sock()
 {
     std::string msg { greeter::check_and_create_app_dir() };
     if (!msg.empty() && msg != "created") {
@@ -28,7 +29,7 @@ auto
 App::run( int p_argc, char **p_argv ) -> int
 {
     return m_app->make_window_and_run<greeter::Interface>(p_argc, p_argv,
-           m_req_signal, m_res_signal);
+           m_signal);
 }
 
 
