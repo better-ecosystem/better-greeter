@@ -14,10 +14,10 @@ using greeter::Interface;
 
 Interface::Interface( const sigc::signal<Socket::Response (
                       const Socket::Request & )> &p_signal ) :
-    m_users(greeter::get_users()),
+    m_users(utils::get_users()),
     m_signal(p_signal)
 {
-    auto users { greeter::get_users() };
+    auto users { utils::get_users() };
     if (m_users.empty()) [[unlikely]]
     {
         log::write<ERROR>("Failed to open /etc/passwd for reading.");
@@ -27,7 +27,7 @@ Interface::Interface( const sigc::signal<Socket::Response (
     this->fullscreen();
 
     auto b { Gtk::Builder::create_from_file(
-        greeter::get_app_file("greeter.xml")) };
+        utils::get_app_file("greeter.xml")) };
 
     this->set_child(*b->get_widget<Gtk::Box>("better-greeter-container"));
 
@@ -41,59 +41,58 @@ Interface::Interface( const sigc::signal<Socket::Response (
 void
 Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
 {
-    m_pfp = p_b->get_widget<Gtk::Picture>("better-greeter-pfp");
-    m_username = p_b->get_widget<Gtk::Label>("better-greeter-username");
-    m_username_switcher = p_b->get_widget<Gtk::Button>(
-        "better-greeter-username-switcher");
     m_password = p_b->get_widget<Gtk::Entry>("better-greeter-password");
-    m_clock = p_b->get_widget<Gtk::Label>("better-greeter-clock");
     m_settings = p_b->get_widget<Gtk::Button>("better-greeter-settings");
+    m_username = p_b->get_widget<Gtk::Label>("better-greeter-username");
+    m_clock    = p_b->get_widget<Gtk::Label>("better-greeter-clock");
+    m_pfp      = p_b->get_widget<Gtk::Picture>("better-greeter-pfp");
+    m_username_switcher = p_b->get_widget<Gtk::Button>(
+                         "better-greeter-username-switcher");
 
+    Json::Value last_picked_user { utils::get_cache() };
+
+    /* TODO: Make a window showing up saying that a "thing" failed. */
+    if (last_picked_user.isMember("err")) [[unlikely]]
     {
-        Json::Value last_picked_user { greeter::get_cache() };
+        log::write<ERROR>("Failed to parse cache file: {}",
+                           last_picked_user["err"].asString());
+        last_picked_user = Json::Value { m_users.begin()->first };
+    } else [[likely]]
+        last_picked_user = last_picked_user["username"];
 
-        /* TODO: Make a window showing up saying that a "thing" failed. */
-        if (last_picked_user.isMember("err")) {
-            log::write<ERROR>("Failed to parse cache file: {}",
-                               last_picked_user["err"].asString());
-            last_picked_user = Json::Value { m_users.begin()->first };
-        } else last_picked_user = last_picked_user["username"];
-
-        if (last_picked_user.isNull()) {
-            log::write<ERROR>("Failed to open cache file for reading.");
-            last_picked_user = Json::Value { m_users.begin()->first };
-        }
-
-        if (!greeter::set_pfp(*m_pfp, m_users[last_picked_user.asString()]))
-            [[unlikely]] m_pfp->set_visible(false);
-        else [[likely]] /* If the user have a profile picture */
-            m_pfp->set_visible(true);
-
-        m_username->set_label(last_picked_user.asString());
-        if (m_users.size() == 1)
-            m_username_switcher->set_visible(false);
-
-        m_password->set_icon_from_icon_name(
-            "view-reveal-symbolic", Gtk::Entry::IconPosition::SECONDARY);
-        m_password->signal_icon_press().connect(
-            [this]( Gtk::Entry::IconPosition p_pos )
-            {
-                if (p_pos != Gtk::Entry::IconPosition::SECONDARY) return;
-
-                m_password->set_visibility(!m_password->get_visibility());
-                m_password->set_icon_from_icon_name(
-                    !m_password->get_visibility() ?
-                    "view-reveal-symbolic" : "view-conceal-symbolic",
-                    Gtk::Entry::IconPosition::SECONDARY
-                );
-            }
-        );
-
-        m_username_switcher->signal_clicked().connect(sigc::mem_fun(
-            *this, &Interface::on_username_switch));
-
-        
+    if (last_picked_user.isNull()) [[unlikely]]
+    {
+        log::write<ERROR>("Failed to open cache file for reading.");
+        last_picked_user = Json::Value { m_users.begin()->first };
     }
+
+    if (!utils::set_pfp(*m_pfp, m_users[last_picked_user.asString()]))
+        [[unlikely]] m_pfp->set_visible(false);
+    else [[likely]] /* If the user have a profile picture */
+        m_pfp->set_visible(true);
+
+    m_username->set_label(last_picked_user.asString());
+    if (m_users.size() == 1) m_username_switcher->set_visible(false);
+
+    m_password->set_icon_from_icon_name("view-reveal-symbolic",
+                                         Gtk::Entry::IconPosition::SECONDARY);
+
+    m_password->signal_icon_press().connect(
+        [this]( Gtk::Entry::IconPosition p_pos )
+        {
+            if (p_pos != Gtk::Entry::IconPosition::SECONDARY) return;
+
+            m_password->set_visibility(!m_password->get_visibility());
+            m_password->set_icon_from_icon_name(
+                !m_password->get_visibility() ?
+                "view-reveal-symbolic" : "view-conceal-symbolic",
+                Gtk::Entry::IconPosition::SECONDARY
+            );
+        }
+    );
+
+    m_username_switcher->signal_clicked().connect(sigc::mem_fun(
+        *this, &Interface::on_username_switch));
 }
 
 
@@ -120,7 +119,7 @@ Interface::on_username_switch( void )
     else it++;
 
     m_username->set_label(it->first);
-    if (greeter::set_pfp(*m_pfp, it->second)) [[likely]]
+    if (utils::set_pfp(*m_pfp, it->second)) [[likely]]
     { /* If the user have a profile picture */
         m_pfp->set_visible(true);
     } else [[unlikely]]

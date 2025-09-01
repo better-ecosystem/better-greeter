@@ -10,7 +10,7 @@
 #include "greeter/utils.hh"
 
 
-namespace greeter
+namespace greeter::utils
 {
     auto
     check_and_create_app_dir( void ) -> std::string

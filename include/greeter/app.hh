@@ -9,6 +9,9 @@ namespace Gtk  { class Picture; }
 
 namespace greeter
 {
+    /**
+     * A class containing the base application and logic for better-greeter.
+     */
     class App
     {
     public:

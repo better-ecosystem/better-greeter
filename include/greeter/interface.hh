@@ -16,6 +16,9 @@ namespace greeter
     namespace fs = std::filesystem;
 
 
+    /**
+     * A class that manages the user interface of better-greeter.
+     */
     class Interface : public Gtk::Window
     {
     public:
@@ -42,8 +45,17 @@ namespace greeter
     protected:
         void setup_widgets( const std::shared_ptr<Gtk::Builder> &p_builder );
 
+
+        /**
+         * @brief Timeout function to update @e m_clock every second.
+         */
         auto update_clock( void ) -> bool;
 
+
+        /**
+         * @brief A function that is triggered when
+         *        the user press on @e m_username_switcher .
+         */
         void on_username_switch( void );
     };
 }

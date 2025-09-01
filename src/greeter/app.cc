@@ -13,7 +13,7 @@ App::App( void ) :
     m_app(Gtk::Application::create(APP_ID)),
     m_greetd_sock()
 {
-    std::string msg { greeter::check_and_create_app_dir() };
+    std::string msg { utils::check_and_create_app_dir() };
     if (!msg.empty() && msg != "created") {
         log::write<ERROR>("Failed to create app file: {}", msg);
         std::exit(1);
@@ -22,8 +22,6 @@ App::App( void ) :
     if (msg.empty()) log::write<INFO>("Application file found.");
 
     load_css();
-
-    // m_signal.connect()
 }
 
 
@@ -39,7 +37,7 @@ void
 App::load_css( void )
 {
     auto provider { Gtk::CssProvider::create() };
-    provider->load_from_path(get_app_file("style.css"));
+    provider->load_from_path(utils::get_app_file("style.css"));
 
     Gtk::StyleContext::add_provider_for_display(
         Gdk::Display::get_default(),

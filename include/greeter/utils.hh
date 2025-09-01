@@ -4,20 +4,24 @@
 #include <array>
 #include <map>
 
+#define CONSTVAL static constexpr
+
 namespace Json { class Value; }
 namespace Gtk  { class Picture; }
 
 
-namespace greeter
+/**
+ * Utility namespace containing all utilities function used by multiple
+ * functions placed in different units.
+ */
+namespace greeter::utils
 {
     namespace fs = std::filesystem;
 
-    static constexpr std::array<std::string_view, 3> BASE_PATHS {{
-        "/etc/better/greeter",
-        "."
+    CONSTVAL std::string_view CACHE_PATH { "/etc/better/greeter/cache.json" };
+    CONSTVAL std::array<std::string_view, 3> BASE_PATHS {{
+        "/etc/better/greeter", "."
     }};
-    static constexpr std::string_view CACHE_PATH {
-        "/etc/better/greeter/cache.json" };
 
 
     /**

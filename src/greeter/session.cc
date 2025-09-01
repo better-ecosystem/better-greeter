@@ -104,10 +104,10 @@ Session::get_sessions() -> std::vector<Session>
         fs::directory_iterator it { path };
 
         for (const auto &file : it) {
-            if (!fs::is_regular_file(file.path())) continue;
+            if (!fs::is_regular_file(file.path())) [[unlikely]] continue;
 
             fs::path file_path { file };
-            if (file_path.extension() != ".desktop") continue;
+            if (file_path.extension() != ".desktop") [[unlikely]] continue;
 
             std::ifstream session_stream { file_path };
 
