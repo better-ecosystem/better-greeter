@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- Root container -->
+  <object class="GtkBox" id="better-greeter-container">
+
+    <property name="name">better-greeter-container</property>
+    <property name="orientation">vertical</property>
+    <property name="hexpand">true</property>
+    <property name="vexpand">true</property>
+
+    <!-- Top container -->
+    <child>
+
+      <object class="GtkBox" id="better-greeter-top-container">
+
+        <property name="name">better-greeter-top-container</property>
+        <property name="halign">fill</property>
+        <property name="valign">start</property>
+
+        <child>
+
+          <object class="GtkLabel" id="better-greeter-clock">
+
+            <property name="name">better-greeter-clock</property>
+            <property name="justify">center</property>
+            <property name="halign">center</property>
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+
+        <child>
+
+          <object class="GtkButton" id="better-greeter-accessibility">
+
+            <property name="icon-name">preferences-desktop-accessibility-symbolic</property>
+            <property name="name">better-greeter-accessibility</property>
+            <property name="has-frame">false</property>
+            <property name="halign">end</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- User container -->
+    <child>
+
+      <object class="GtkBox" id="better-greeter-user-container">
+
+        <property name="name">better-greeter-user-container</property>
+        <property name="orientation">vertical</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <property name="vexpand">true</property>
+
+        <!-- Profile picture -->
+        <child>
+
+          <object class="GtkPicture" id="better-greeter-pfp">
+
+            <property name="name">better-greeter-pfp</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+          </object>
+        </child>
+
+        <!-- Username + switcher -->
+        <child>
+
+          <object class="GtkCenterBox" id="better-greeter-username-container">
+
+            <property name="name">better-greeter-username-container</property>
+            <property name="margin-top">10</property>
+            <property name="halign">center</property>
+            <property name="hexpand">true</property>
+            <property name="valign">start</property>
+
+            <child type="center">
+
+              <object class="GtkLabel" id="better-greeter-username">
+
+                <property name="name">better-greeter-username</property>
+                <property name="halign">center</property>
+                <property name="hexpand">true</property>
+              </object>
+            </child>
+
+            <child type="end">
+
+              <object class="GtkButton" id="better-greeter-username-switcher">
+
+                <property name="icon-name">media-playback-start-symbolic</property>
+                <property name="name">better-greeter-username-switcher</property>
+                <property name="has-frame">false</property>
+                <property name="halign">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <!-- Password entry -->
+        <child>
+
+          <object class="GtkEntry" id="better-greeter-password">
+
+            <property name="name">better-greeter-password</property>
+            <property name="input-purpose">password</property>
+            <property name="invisible-char">*</property>
+            <property name="visibility">false</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

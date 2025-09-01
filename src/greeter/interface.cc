@@ -14,7 +14,6 @@ using greeter::Interface;
 
 Interface::Interface( const sigc::signal<Socket::Response (
                       const Socket::Request & )> &p_signal ) :
-    m_container(Gtk::Orientation::VERTICAL),
     m_users(greeter::get_users()),
     m_signal(p_signal)
 {
@@ -26,9 +25,13 @@ Interface::Interface( const sigc::signal<Socket::Response (
     }
 
     this->fullscreen();
-    this->set_child(*m_container);
 
-    this->create_widgets();
+    auto b { Gtk::Builder::create_from_file(
+        greeter::get_app_file("greeter.xml")) };
+
+    this->set_child(*b->get_widget<Gtk::Box>("better-greeter-container"));
+
+    this->setup_widgets(b);
 
     Glib::signal_timeout().connect(
         sigc::mem_fun(*this, &Interface::update_clock), 60);
@@ -36,46 +39,22 @@ Interface::Interface( const sigc::signal<Socket::Response (
 
 
 void
-Interface::create_widgets( void )
+Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
 {
-    m_container->set_name("better-greeter-container");
-
-    { /* Create top widgets */
-        auto *top_container { Gtk::make_managed<Gtk::Box>() };
-
-        m_clock->set_justify(Gtk::Justification::CENTER);
-        m_clock->set_hexpand(true);
-        m_clock->set_halign(Gtk::Align::CENTER);
-        m_clock->set_name("better-greeter-clock");
-
-        m_accessibility->set_has_frame(false);
-        m_accessibility->set_halign(Gtk::Align::END);
-        m_accessibility->set_name("better-greeter-accessability");
-        m_accessibility->set_icon_name(
-            "preferences-desktop-accessibility-symbolic");
-
-        top_container->set_valign(Gtk::Align::START);
-        top_container->set_halign(Gtk::Align::FILL);
-        top_container->set_name("better-greeter-top-container");
-        top_container->append(*m_clock);
-        top_container->append(*m_accessibility);
-
-        m_container->append(*top_container);
-    }
+    m_pfp = p_b->get_widget<Gtk::Picture>("better-greeter-pfp");
+    m_username = p_b->get_widget<Gtk::Label>("better-greeter-username");
+    m_username_switcher = p_b->get_widget<Gtk::Button>(
+        "better-greeter-username-switcher");
+    m_password = p_b->get_widget<Gtk::Entry>("better-greeter-password");
+    m_clock = p_b->get_widget<Gtk::Label>("better-greeter-clock");
 
     {
-        auto *user_container { Gtk::make_managed<Gtk::Box>() };
-        user_container->set_orientation(Gtk::Orientation::VERTICAL);
-        user_container->set_vexpand(true);
-        user_container->set_halign(Gtk::Align::CENTER);
-        user_container->set_valign(Gtk::Align::CENTER);
-
         Json::Value last_picked_user { greeter::get_cache() };
 
         /* TODO: Make a window showing up saying that a "thing" failed. */
         if (last_picked_user.isMember("err")) {
             log::write<ERROR>("Failed to parse cache file: {}",
-                                    last_picked_user["err"].asString());
+                               last_picked_user["err"].asString());
             last_picked_user = Json::Value { m_users.begin()->first };
         } else last_picked_user = last_picked_user["username"];
 
@@ -88,64 +67,29 @@ Interface::create_widgets( void )
             [[unlikely]] m_pfp->set_visible(false);
         else [[likely]] /* If the user have a profile picture */
             m_pfp->set_visible(true);
-        m_pfp->set_halign(Gtk::Align::CENTER);
-        m_pfp->set_valign(Gtk::Align::CENTER);
-        m_pfp->set_name("better-greeter-pfp");
-        user_container->append(*m_pfp);
 
-        auto *username_container { Gtk::make_managed<Gtk::CenterBox>() };
-
-        m_username->set_hexpand(true);
-        m_username->set_halign(Gtk::Align::CENTER);
         m_username->set_label(last_picked_user.asString());
-        m_username->set_name("better-greeter-username");
-
-        m_username_switcher->set_has_frame(false);
-        m_username_switcher->set_icon_name("media-playback-start-symbolic");
-        m_username_switcher->set_halign(Gtk::Align::END);
-        m_username_switcher->set_name("better-greeter-username-switcher");
-
         if (m_users.size() == 1)
             m_username_switcher->set_visible(false);
 
-        username_container->set_margin_top(10);
-        username_container->set_hexpand(true);
-        username_container->set_halign(Gtk::Align::CENTER);
-        username_container->set_valign(Gtk::Align::START);
-
-        username_container->set_center_widget(*m_username);
-        username_container->set_end_widget(*m_username_switcher);
-        user_container->append(*username_container);
-
-        m_password->set_invisible_char('*');
-        m_password->set_input_purpose(Gtk::InputPurpose::PASSWORD);
-        m_password->set_visibility(false);
         m_password->set_icon_from_icon_name(
             "view-reveal-symbolic", Gtk::Entry::IconPosition::SECONDARY);
         m_password->signal_icon_press().connect(
             [this]( Gtk::Entry::IconPosition p_pos )
             {
-                if (p_pos == Gtk::Entry::IconPosition::SECONDARY) {
-                    m_password->set_visibility(!m_password->get_visibility());
-                    m_password->set_icon_from_icon_name(
-                        !m_password->get_visibility() ?
-                        "view-reveal-symbolic" : "view-conceal-symbolic",
-                        Gtk::Entry::IconPosition::SECONDARY
-                    );
-                }
+                if (p_pos != Gtk::Entry::IconPosition::SECONDARY) return;
+
+                m_password->set_visibility(!m_password->get_visibility());
+                m_password->set_icon_from_icon_name(
+                    !m_password->get_visibility() ?
+                    "view-reveal-symbolic" : "view-conceal-symbolic",
+                    Gtk::Entry::IconPosition::SECONDARY
+                );
             }
         );
 
-        user_container->append(*m_password);
-
-        m_container->append(*user_container);
-
         m_username_switcher->signal_clicked().connect(sigc::mem_fun(
             *this, &Interface::on_username_switch));
-    }
-
-    {
-        
     }
 }
 

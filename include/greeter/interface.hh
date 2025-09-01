@@ -9,6 +9,8 @@
 #include "greeter/ipc.hh"
 #include "widget_ptr.hh"
 
+namespace Gtk { class Builder; }
+
 
 namespace greeter
 {
@@ -23,25 +25,23 @@ namespace greeter
 
 
     private:
-        WidgetPtr<Gtk::Box> m_container;
+        Gtk::Label  *m_clock;
+        Gtk::Button *m_accessibility;
 
-        WidgetPtr<Gtk::Label> m_clock;
-        WidgetPtr<Gtk::Button> m_accessibility;
+        Gtk::Picture *m_pfp;
+        Gtk::Label   *m_username;
+        Gtk::Button  *m_username_switcher;
 
-        WidgetPtr<Gtk::Picture> m_pfp;
-        WidgetPtr<Gtk::Label> m_username;
-        WidgetPtr<Gtk::Button> m_username_switcher;
+        Gtk::Entry *m_password;
 
-        WidgetPtr<Gtk::Entry> m_password;
-
-        WidgetPtr<Gtk::Button> m_settings;
+        Gtk::Button *m_settings;
 
         std::map<std::string, fs::path> m_users;
 
         sigc::signal<Socket::Response ( const Socket::Request & )> m_signal;
 
     protected:
-        void create_widgets( void );
+        void setup_widgets( const std::shared_ptr<Gtk::Builder> &p_builder );
 
         auto update_clock( void ) -> bool;
 

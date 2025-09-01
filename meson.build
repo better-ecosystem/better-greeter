@@ -28,5 +28,5 @@ executable('better-greeter', source_files,
            include_directories: include_directories('include'),
            install: true)
 
-install_data('style.css',
+install_data('style.css', 'greeter.xml',
              install_dir: '/etc/better/greeter')
