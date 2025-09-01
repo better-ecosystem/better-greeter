@@ -1,6 +1,6 @@
 project('Better Greeter', 'cpp',
         default_options: [ 'cpp_std=c++23', 'warning_level=3' ],
-        version: '0.1.1',
+        version: '0.1.2',
         license: 'GPL-3.0-or-later',
         license_files: [ 'COPYING' ])
 
@@ -19,6 +19,7 @@ source_files = files(
     'src/greeter/app.cc',
     'src/greeter/interface.cc',
     'src/greeter/ipc.cc',
+    'src/greeter/session.cc',
     'src/greeter/utils.cc',
 
     'src/main.cc',

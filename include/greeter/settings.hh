@@ -1,10 +1,13 @@
 #pragma once
 #include <string>
-#include "greeter/utils.hh"
+#include <vector>
 
 
 namespace greeter
 {
+    struct Session;
+
+
     class Settings
     {
     public:
