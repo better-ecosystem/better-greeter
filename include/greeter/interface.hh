@@ -7,7 +7,6 @@
 #include <gtkmm/label.h>
 #include <gtkmm/box.h>
 #include "greeter/ipc.hh"
-#include "widget_ptr.hh"
 
 namespace Gtk { class Builder; }
 
