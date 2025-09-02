@@ -95,7 +95,7 @@ Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
     m_password->signal_activate().connect(
         [this](  )
         {
-            auto _ = m_greetd_socket.request_auth("kei", "", {});
+            auto _ = m_greetd_socket.request_auth(m_username->get_label(), "", {});
         }
     );
 }
