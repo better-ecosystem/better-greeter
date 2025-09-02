@@ -29,7 +29,7 @@ auto
 App::run( int p_argc, char **p_argv ) -> int
 {
     return m_app->make_window_and_run<greeter::Interface>(p_argc, p_argv,
-           m_signal);
+           m_greetd_sock);
 }
 
 
