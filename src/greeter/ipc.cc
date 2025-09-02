@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <fstream>
 
 #include <json/reader.h>
 #include <json/writer.h>
@@ -47,9 +48,9 @@ Socket::write( const Request &p_msg ) -> Response
             msg["cmd"]  = Json::Value { Json::arrayValue };
             msg["env"]  = Json::Value { Json::arrayValue };
 
-            for (const std::string &arg : p_msg.session.first)
+            for (const std::string &arg : p_msg.session.args)
                 msg["cmd"].append(arg);
-            for (const std::string &env : p_msg.session.second)
+            for (const std::string &env : p_msg.session.envs)
                 msg["env"].append(env);
 
             break;
@@ -61,6 +62,19 @@ Socket::write( const Request &p_msg ) -> Response
     send_message(msg);
 
     return get_message();
+}
+
+
+auto
+Socket::request_auth( const std::string &p_username,
+                      const std::string &p_password,
+                      const Session     &p_session ) -> Response
+{
+    Request create_session { CREATE_SESSION, p_username };
+    Response msg { write(create_session) };
+
+    std::ofstream out { "/home/kei/project/better/greeter/out.txt" };
+    out << msg.msg_type << ' ' << msg.msg_desc << ' ' << static_cast<uint32_t>(msg.type);
 }
 
 

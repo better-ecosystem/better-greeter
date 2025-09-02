@@ -22,8 +22,7 @@ namespace greeter
     class Interface : public Gtk::Window
     {
     public:
-        Interface( const sigc::signal<Socket::Response (
-                                const Socket::Request & )> &p_signal );
+        Interface( const Socket &p_socket );
 
 
     private:
@@ -40,14 +39,14 @@ namespace greeter
 
         std::map<std::string, fs::path> m_users;
 
-        sigc::signal<Socket::Response ( const Socket::Request & )> m_signal;
+        Socket m_greetd_socket;
 
     protected:
         void setup_widgets( const std::shared_ptr<Gtk::Builder> &p_builder );
 
 
         /**
-         * @brief Timeout function to update @e m_clock every second.
+         * @brief Timeout function to update @e m_clock every 60 seconds.
          */
         auto update_clock( void ) -> bool;
 

@@ -12,10 +12,9 @@
 using greeter::Interface;
 
 
-Interface::Interface( const sigc::signal<Socket::Response (
-                      const Socket::Request & )> &p_signal ) :
+Interface::Interface( const Socket &p_socket ) :
     m_users(utils::get_users()),
-    m_signal(p_signal)
+    m_greetd_socket(p_socket)
 {
     auto users { utils::get_users() };
     if (m_users.empty()) [[unlikely]]
@@ -30,7 +29,6 @@ Interface::Interface( const sigc::signal<Socket::Response (
         utils::get_app_file("greeter.xml")) };
 
     this->set_child(*b->get_widget<Gtk::Box>("better-greeter-container"));
-
     this->setup_widgets(b);
 
     Glib::signal_timeout().connect(
@@ -93,6 +91,13 @@ Interface::setup_widgets( const std::shared_ptr<Gtk::Builder> &p_b )
 
     m_username_switcher->signal_clicked().connect(sigc::mem_fun(
         *this, &Interface::on_username_switch));
+
+    m_password->signal_activate().connect(
+        [this](  )
+        {
+            auto _ = m_greetd_socket.request_auth("kei", "", {});
+        }
+    );
 }
 
 

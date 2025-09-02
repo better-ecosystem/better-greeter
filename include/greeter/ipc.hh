@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <vector>
+#include "greeter/session.hh"
 
 namespace Gio
 {
@@ -32,23 +32,18 @@ namespace greeter
         {
             ReqType type;
 
-            union
-            {
-                std::string msg;
-                std::pair<std::vector<std::string>,
-                          std::vector<std::string>> session;
-            };
+            std::string msg;
+            Session     session;
 
-            Request( ReqType p_type, std::string p_msg = "" ) :
+            Request( ReqType p_type, const std::string &p_msg = "" ) :
                 type(p_type),
                 msg(p_msg)
             {}
 
 
-            Request( ReqType p_type, std::vector<std::string> p_cmd,
-                                     std::vector<std::string> p_env ) :
+            Request( ReqType p_type, const Session &p_session ) :
                 type(p_type),
-                session({ std::move(p_cmd), std::move(p_env) })
+                session(p_session)
             {}
         };
 
@@ -71,7 +66,23 @@ namespace greeter
         Socket( void );
 
 
+        [[nodiscard]]
         auto write( const Request &p_msg ) -> Response;
+
+
+        /**
+         * @brief A wrapper for a bunch of @sa write functions.
+         *
+         * @param p_username The username to authenticate.
+         * @param p_password The password to the user.
+         * @param p_session  The session to start.
+         * @return A Response struct, representing the first error found,
+         *         or the last response after auth.
+         */
+        [[nodiscard]]
+        auto request_auth( const std::string &p_username,
+                           const std::string &p_password,
+                           const Session     &p_session ) -> Response;
 
     private:
         std::shared_ptr<Gio::SocketClient>     m_client;
