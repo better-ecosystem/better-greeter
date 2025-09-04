@@ -61,16 +61,18 @@ namespace
 
 Session::Session( const std::string &p_bin )
 {
-    if (!p_bin.contains(' ')) {
+    if (p_bin.find(' ') == std::string::npos) {
         args.emplace_back(get_full_bin_path(p_bin));
         return;
     }
 
     size_t i      { 0 };
     auto   tokens { string_to_vec(p_bin, ' ') };
-    if (tokens.front() == "env" || tokens.front().contains('=')) {
+    if (tokens.front() == "env"
+        || tokens.front().find('=') != std::string::npos) {
         if (tokens.front() == "env") i = 1;
-        for (; i < tokens.size() && tokens[i].contains('='); i++)
+        for (; i < tokens.size()
+            && tokens[i].find('=') != std::string::npos; i++)
             envs.emplace_back(tokens[i]);
     }
 
@@ -115,7 +117,8 @@ Session::get_sessions() -> std::vector<Session>
                 if (line.rfind("Exec=", 0) == 0)
                     sessions.emplace_back(line.substr(5));
 
-            if (!sessions.empty() && path.string().contains('x'))
+            if (!sessions.empty()
+                && path.string().find('x') != std::string::npos)
                 sessions.back().X11 = true;
         }
     }
